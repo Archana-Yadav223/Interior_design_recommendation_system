@@ -1,55 +1,289 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Interior Design Recommendation</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Based Interior Design Recommendation System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { font-family: 'Poppins', sans-serif; }
+        body { background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%); }
+        .gradient-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .gradient-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .btn-hover { transition: all 0.3s ease; }
+        .btn-hover:hover { transform: scale(1.02); }
+        .fade-in { animation: fadeIn 0.6s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .input-focus { transition: all 0.3s ease; }
+        .input-focus:focus { box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); border-color: #667eea; }
+        .progress-line { transition: width 0.5s ease; }
+    </style>
 </head>
 
-<body style="text-align:center; font-family:Arial;">
+<body class="text-slate-800 min-h-screen py-8 px-4 sm:px-6 lg:px-8">
 
-    <h1>Interior Design Recommendation System</h1>
+<div class="max-w-5xl mx-auto">
 
-    <!-- Upload Form -->
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" required>
-        <br><br>
-        <button type="submit">Upload</button>
+<header class="gradient-header rounded-3xl shadow-2xl p-8 sm:p-12 text-white text-center mb-10 fade-in">
+    <div class="flex justify-center mb-4">
+        <i class="fas fa-paint-brush text-4xl opacity-90"></i>
+    </div>
+    <h1 class="text-5xl sm:text-6xl font-extrabold mb-3 tracking-tight">Image Based Interior Design<br class="hidden sm:block"> Recommendation System</h1>
+    <p class="text-lg sm:text-xl opacity-95 font-light">Transform your room with AI-powered interior design recommendations</p>
+</header>
+
+<div class="mb-8 fade-in">
+    <div class="flex justify-between mb-4">
+        <div class="flex-1 text-center">
+            <div class="step-badge-1 mx-auto w-10 h-10 bg-white border-2 border-purple-600 rounded-full flex items-center justify-center font-bold text-purple-600 shadow-lg mb-2">
+                1
+            </div>
+            <p class="text-xs text-slate-600 font-medium">Room</p>
+        </div>
+        <div class="flex-1 text-center">
+            <div class="step-badge-2 mx-auto w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center font-bold text-slate-600 shadow mb-2">
+                2
+            </div>
+            <p class="text-xs text-slate-600 font-medium">Style</p>
+        </div>
+        <div class="flex-1 text-center">
+            <div class="step-badge-3 mx-auto w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center font-bold text-slate-600 shadow mb-2">
+                3
+            </div>
+            <p class="text-xs text-slate-600 font-medium">Upload</p>
+        </div>
+    </div>
+    <div class="w-full h-1.5 bg-gray-300 rounded-full overflow-hidden">
+        <div class="progress-line h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full" style="width: 33.33%;"></div>
+    </div>
+</div>
+
+<section class="max-w-2xl mx-auto bg-white p-8 sm:p-10 rounded-3xl shadow-2xl border border-slate-100 fade-in">
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+
+        <!-- STEP 1 -->
+        <div id="step1">
+            <label class="block mb-4 font-semibold text-lg text-slate-700 flex items-center gap-2">
+                <i class="fas fa-home text-purple-600"></i> What Room Are You Designing?
+            </label>
+            <select id="category" name="category" class="input-focus w-full p-4 border-2 border-slate-200 rounded-xl text-slate-800 bg-white focus:outline-none">
+                <option value="">Choose a room...</option>
+                <option value="bathroom">🚿 Bathroom</option>
+                <option value="bedroom">🛏️ Bedroom</option>
+                <option value="living_room">🛋️ Living Room</option>
+                <option value="kitchen">🍳 Kitchen</option>
+            </select>
+
+            <button type="button" onclick="goToStep2()" class="gradient-btn btn-hover mt-6 w-full text-white p-4 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg">
+                Continue <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+
+        <!-- STEP 2 -->
+        <div id="step2" class="hidden fade-in">
+            <label class="block mb-4 font-semibold text-lg text-slate-700 flex items-center gap-2">
+                <i class="fas fa-palette text-purple-600"></i> Select Your Design Style
+            </label>
+            <select id="style" name="style" class="input-focus w-full p-4 border-2 border-slate-200 rounded-xl text-slate-800 bg-white focus:outline-none">
+                <option value="">Choose a style...</option>
+            </select>
+
+            <div class="flex gap-3 mt-6">
+                <button type="button" onclick="goBackToStep1()" class="w-1/2 bg-slate-200 hover:bg-slate-300 text-slate-700 p-4 rounded-xl font-semibold btn-hover flex items-center justify-center gap-2 transition-all">
+                    <i class="fas fa-chevron-left"></i> Back
+                </button>
+                <button type="button" onclick="goToStep3()" class="gradient-btn btn-hover w-1/2 text-white p-4 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg">
+                    Continue <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div id="step3" class="hidden fade-in">
+            <label class="block mb-4 font-semibold text-lg text-slate-700 flex items-center gap-2">
+                <i class="fas fa-image text-purple-600"></i> Upload Your Room Photo
+            </label>
+
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-3 border-slate-300 border-dashed rounded-2xl cursor-pointer bg-gradient-to-br from-slate-50 to-slate-100 hover:from-purple-50 hover:to-purple-100 hover:border-purple-400 transition-all duration-300">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <i class="fas fa-cloud-arrow-up text-4xl text-purple-500 mb-3"></i>
+                        <p class="mb-2 text-sm text-slate-700 font-medium">
+                            <span class="font-semibold">Click to upload</span> or drag and drop
+                        </p>
+                        <p class="text-xs text-slate-500">PNG, JPG (Max 10MB)</p>
+                    </div>
+                    <input id="dropzone-file" type="file" name="image" class="hidden" required />
+                </label>
+            </div>
+
+            <div id="fileName" class="mt-4 text-center text-sm text-purple-600 font-medium hidden"></div>
+
+            <div class="flex gap-3 mt-6">
+                <button type="button" onclick="goBackToStep2()" class="w-1/2 bg-slate-200 hover:bg-slate-300 text-slate-700 p-4 rounded-xl font-semibold btn-hover flex items-center justify-center gap-2 transition-all">
+                    <i class="fas fa-chevron-left"></i> Back
+                </button>
+                <button type="submit" class="gradient-btn btn-hover w-1/2 text-white p-4 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg">
+                    <i class="fas fa-wand-magic-sparkles"></i> Generate
+                </button>
+            </div>
+        </div>
+
     </form>
+</section>
 
-    <br><br>
+{% if query %}
+<div class="space-y-12 mt-12">
 
-    <!-- Uploaded Image -->
-    {% if query %}
-        <h2>Uploaded Image:</h2>
-        <img src="{{ url_for('static', filename=query) }}" width="250">
-    {% endif %}
+<section class="text-center fade-in">
+    <div class="mb-6">
+        <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
+            <i class="fas fa-image text-purple-600 mr-2"></i>Your Space
+        </h2>
+        <p class="text-slate-600">Your uploaded room photo</p>
+    </div>
+    <div class="max-w-2xl mx-auto">
+        <img src="{{ url_for('static', filename=query) }}" class="w-full rounded-2xl shadow-2xl object-cover" style="max-height: 400px;">
+    </div>
+</section>
 
-    <br><br>
+{% if results %}
+<section class="fade-in">
+    <div class="text-center mb-8">
+        <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
+            <i class="fas fa-sparkles text-purple-600 mr-2"></i>Design Inspiration
+        </h2>
+        <p class="text-slate-600">AI-curated design matches for your space</p>
+    </div>
 
-    <!-- Similar Images -->
-    {% if results %}
-        <h2>Similar Images:</h2>
-
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {% for path, score in results %}
-            <div style="display:inline-block; margin:10px;">
-                <img src="{{ url_for('static', filename=path) }}" width="200">
-                <br>
-                <small>Score: {{ score }}</small>
+        <div class="card-hover bg-white rounded-2xl overflow-hidden shadow-lg border border-slate-100">
+            <div class="relative overflow-hidden h-56">
+                <img src="{{ url_for('static', filename=path) }}" class="w-full h-full object-cover hover:scale-110 transition-transform duration-300">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
             </div>
+            <div class="p-5">
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-600 font-medium">Match Score</span>
+                    <div class="flex items-center gap-2">
+                        <div class="w-20 h-2 bg-slate-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-purple-500 to-purple-600" style="width: {{ score }}%;"></div>
+                        </div>
+                        <span class="text-purple-600 font-bold">{{ score }}%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-    {% endif %}
+    </div>
+</section>
+{% endif %}
 
-    <br><br>
-
-    <!-- Suggestions -->
-    {% if suggestions %}
-        <h2>Recommended Items:</h2>
-
+{% if suggestions %}
+<section class="fade-in">
+    <div class="text-center mb-8">
+        <h2 class="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
+            <i class="fas fa-shopping-bag text-purple-600 mr-2"></i>Shop the Look
+        </h2>
+        <p class="text-slate-600">Recommended products to achieve this design</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
         {% for name, link in suggestions %}
-            <div style="margin:10px;">
-                <a href="{{ link }}" target="_blank">{{ name }}</a>
+        <a href="{{ link }}" target="_blank" class="card-hover group bg-white border-2 border-slate-200 p-5 rounded-2xl shadow-md hover:border-purple-400 hover:shadow-lg">
+            <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-800 group-hover:text-purple-600 transition-colors">{{ name }}</span>
+                <i class="fas fa-arrow-up-right text-purple-600 opacity-0 group-hover:opacity-100 transition-opacity"></i>
             </div>
+        </a>
         {% endfor %}
-    {% endif %}
+    </div>
+</section>
+{% endif %}
+
+</div>
+{% endif %}
+
+</div>
+
+<script>
+const allStyles = ["boho", "industrial", "minimalist", "modern", "scandinavian"];
+
+function updateStepIndicator(step) {
+    for (let i = 1; i <= 3; i++) {
+        const badge = document.querySelector(`.step-badge-${i}`);
+        if (i < step) {
+            badge.className = `step-badge-${i} mx-auto w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-lg`;
+        } else if (i === step) {
+            badge.className = `step-badge-${i} mx-auto w-10 h-10 bg-white border-2 border-purple-600 text-purple-600 rounded-full flex items-center justify-center font-bold text-sm shadow-lg`;
+        } else {
+            badge.className = `step-badge-${i} mx-auto w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center font-bold text-slate-600 shadow`;
+        }
+    }
+    const progressPercentages = [0, 33.33, 66.66, 100];
+    document.querySelector(".progress-line").style.width = progressPercentages[step] + "%";
+}
+
+function goToStep2() {
+    const category = document.getElementById("category").value;
+    if (!category) {
+        alert("Please select a room type");
+        return;
+    }
+
+    document.getElementById("step1").classList.add("hidden");
+    document.getElementById("step2").classList.remove("hidden");
+    updateStepIndicator(2);
+
+    const styleDropdown = document.getElementById("style");
+    styleDropdown.innerHTML = '<option value="">Choose a style...</option>';
+
+    allStyles.forEach(style => {
+        let option = document.createElement("option");
+        option.value = style;
+        option.text = style.charAt(0).toUpperCase() + style.slice(1);
+        styleDropdown.appendChild(option);
+    });
+}
+
+function goToStep3() {
+    const style = document.getElementById("style").value;
+    if (!style) {
+        alert("Please select a style");
+        return;
+    }
+
+    document.getElementById("step2").classList.add("hidden");
+    document.getElementById("step3").classList.remove("hidden");
+    updateStepIndicator(3);
+}
+
+function goBackToStep1() {
+    document.getElementById("step2").classList.add("hidden");
+    document.getElementById("step1").classList.remove("hidden");
+    updateStepIndicator(1);
+}
+
+function goBackToStep2() {
+    document.getElementById("step3").classList.add("hidden");
+    document.getElementById("step2").classList.remove("hidden");
+    updateStepIndicator(2);
+}
+
+document.getElementById("dropzone-file").addEventListener("change", function(e) {
+    const fileName = e.target.files[0]?.name;
+    const fileNameDiv = document.getElementById("fileName");
+    if (fileName) {
+        fileNameDiv.textContent = "✓ " + fileName + " selected";
+        fileNameDiv.classList.remove("hidden");
+    }
+});
+</script>
 
 </body>
 </html>
