@@ -29,7 +29,7 @@ def extract_features(img_path):
     return features
 
 # ---------------- FIND SIMILAR IMAGES ----------------
-def find_similar_images(query_img_path, top_n=5):
+def find_similar_images(query_img_path, category, top_n=5):
     query_features = extract_features(query_img_path)
 
     similarities = cosine_similarity([query_features], features_list)[0]
@@ -42,7 +42,10 @@ def find_similar_images(query_img_path, top_n=5):
         path = image_paths[i]
         score = similarities[i]
 
-        # 🔥 duplicate similarity skip (main fix)
+        # ✅ FILTER BY CATEGORY
+        if category not in path:
+            continue
+
         if any(abs(score - s) < 0.0001 for s in seen_similarities):
             continue
 
@@ -51,7 +54,8 @@ def find_similar_images(query_img_path, top_n=5):
         clean_path = path.replace("\\", "/")
         relative_path = clean_path.replace("static/", "")
 
-        results.append((relative_path, score))
+        score_percent = round(score * 100, 2)
+        results.append((relative_path, score_percent))
 
         if len(results) >= top_n:
             break
@@ -62,13 +66,16 @@ def detect_objects(img_path):
     objects = []
     name = img_path.lower()
 
-    if "sofa" in name:
+    if "sofa" in name or "living" in name:
         objects.append("sofa")
-    if "bed" in name:
+
+    if "bed" in name or "bedroom" in name:
         objects.append("bed")
-    if "plant" in name:
-        objects.append("plant")
-    if "table" in name:
+
+    if "bathroom" in name:
+        objects.append("table")
+
+    if "kitchen" in name:
         objects.append("table")
 
     return objects
@@ -80,17 +87,24 @@ def get_image_hash(path):
     hashlib.md5(f.read()).hexdigest()
 
 # ---------------- SMART LINKS ----------------
-def get_smart_links(objects):
+def get_smart_links(category):
     links = []
 
-    if "sofa" in objects:
+    if category == "living_room":
         links.append(("Buy Sofa", "https://www.amazon.in/s?k=sofa"))
-    if "bed" in objects:
+        links.append(("Buy Coffee Table", "https://www.amazon.in/s?k=coffee+table"))
+
+    elif category == "bedroom":
         links.append(("Buy Bed", "https://www.amazon.in/s?k=bed"))
-    if "plant" in objects:
-        links.append(("Buy Plants", "https://www.amazon.in/s?k=indoor+plants"))
-    if "table" in objects:
-        links.append(("Buy Table", "https://www.amazon.in/s?k=table"))
+        links.append(("Buy Wardrobe", "https://www.amazon.in/s?k=wardrobe"))
+
+    elif category == "bathroom":
+        links.append(("Buy Wash Basin", "https://www.amazon.in/s?k=wash+basin"))
+        links.append(("Buy Mirror", "https://www.amazon.in/s?k=bathroom+mirror"))
+
+    elif category == "kitchen":
+        links.append(("Buy Kitchen Cabinet", "https://www.amazon.in/s?k=kitchen+cabinet"))
+        links.append(("Buy Dining Table", "https://www.amazon.in/s?k=dining+table"))
 
     return links
 
@@ -100,29 +114,28 @@ def index():
     query_path = None
     results = []
     suggestions = []
+    category = None
 
     if request.method == "POST":
         file = request.files["image"]
+        category = request.form.get("category")
 
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(filepath)
 
         query_path = "uploads/" + file.filename
 
-        # get similar images
-        results = find_similar_images(filepath)
+        # ✅ use filepath ONLY here
+        results = find_similar_images(filepath, category)
 
-        # detect objects
-        objects = detect_objects(filepath)
-
-        # smart links
-        suggestions = get_smart_links(objects)
+        suggestions = get_smart_links(category)
 
     return render_template(
         "index.html",
         query=query_path,
         results=results,
-        suggestions=suggestions
+        suggestions=suggestions,
+        category=category
     )
 
 # ---------------- RUN ----------------
